@@ -93,7 +93,11 @@ class Rational {
         }
 
         Rational operator*(const Rational& rhs) const {
-            
+            return Rational(num * rhs.num, denum * rhs.denum);
+        }
+
+         Rational operator/(const Rational& rhs) const {
+            return Rational(num * rhs.denum, denum * rhs.num);
         }
 
     private:
@@ -141,6 +145,9 @@ int main() {
     std::cout << res4 << std::endl;
     std::cout << res5 << std::endl;
     std::cout << ~n << std::endl;
+    std::cout << n * n1 << std::endl;
+    std::cout << n / n1 << std::endl;
     return 0;
 }
+
 
