@@ -1,20 +1,30 @@
 #include<iostream>
+#include<sstream>
+#include "Rational.h"
 
 class Rational {
     public:
         //constructors and destructor
-        Rational(int32_t num_, int32_t denum_) {
-            if ((num_ < 0) && (denum_ < 0)) {
+        Rational(int32_t num_, int32_t denom_) {
+            if ((num_ < 0) && (denom_ < 0)) {
                 num_ = abs(num_);
-                denum_ = abs(denum_);
+                denom_ = abs(denom_);
             }
             num = num_;
-            denum = denum_;
+            denom = denom_;
             reduce();
         }
 
-        Rational()
-            : num(0), denum(1) {}
+        Rational() {
+            setnum(0);
+            setdenom(1);
+        }
+
+        Rational(int32_t num) {
+            setnum(num);
+            setdenom(1);
+        }
+
 
         ~Rational() = default;
 
@@ -22,93 +32,109 @@ class Rational {
         void setnum(int32_t num_) {
             num = num_;
         }
-        int getnum() const {
+        int32_t getnum() const {
             return num;
         }
 
-        void setdenum(int32_t denum_) {
-            denum = denum_;
+        void setdenom(int32_t denom_) {
+            denom = denom_;
         }
-        int getdenum() const {
-            return denum;
+        int32_t getdenom() const {
+            return denom;
         } 
 
         //operators overload
         Rational operator+(const Rational& rhs) const {
-            int n1 = num * rhs.denum;
-            int n2 = rhs.num * denum;
-            int prod = denum * rhs.denum;
+            int n1 = num * rhs.denom;
+            int n2 = rhs.num * denom;
+            int prod = denom * rhs.denom;
             Rational sum(n1 + n2, prod);
             return sum;
         }
 
         Rational& operator+=(const Rational &rhs) {
-            int n = num * rhs.denum;
-            int n1 = rhs.num * denum;
-            int prod = denum * rhs.denum;
+            int n = num * rhs.denom;
+            int n1 = rhs.num * denom;
+            int prod = denom * rhs.denom;
 
             num = n + n1;
-            denum = prod;
+            denom = prod;
             reduce();
             return *this;
         }
 
         Rational operator-(const Rational& rhs) const {
-            int n1 = num * rhs.denum;
-            int n2 = rhs.num * denum;
-            int prod = denum * rhs.denum;
+            int n1 = num * rhs.denom;
+            int n2 = rhs.num * denom;
+            int prod = denom * rhs.denom;
             Rational sub(n1 - n2, prod);
             return sub;
         }
 
         Rational& operator-=(const Rational &rhs) {
-            int n = num * rhs.denum;
-            int n1 = rhs.num * denum;
-            int prod = denum * rhs.denum;
+            int n = num * rhs.denom;
+            int n1 = rhs.num * denom;
+            int prod = denom * rhs.denom;
 
             num = n - n1;
-            denum = prod;
+            denom = prod;
             reduce();
             return *this;
         }
 
         bool operator<(const Rational &rhs) const {
-            return ((num * rhs.denum) < (rhs.num * denum));
+            return ((num * rhs.denom) < (rhs.num * denom));
         }
 
         bool operator>(const Rational &rhs) const {
-            return ((num * rhs.denum) > (rhs.num * denum));
+            return ((num * rhs.denom) > (rhs.num * denom));
         }
 
         bool operator==(const Rational &rhs) const {
-            return ((num * rhs.denum) == (rhs.num * denum));
+            return ((num * rhs.denom) == (rhs.num * denom));
         }
 
         bool operator!=(const Rational &rhs) const {
-            return ((num * rhs.denum) != (rhs.num * denum));
+            return ((num * rhs.denom) != (rhs.num * denom));
         }
 
         Rational operator~() const {
-            return Rational(-num, denum);
+            return Rational(-num, denom);
         }
 
         Rational operator*(const Rational& rhs) const {
-            return Rational(num * rhs.num, denum * rhs.denum);
+            return Rational(num * rhs.num, denom * rhs.denom);
         }
 
-         Rational operator/(const Rational& rhs) const {
-            return Rational(num * rhs.denum, denum * rhs.num);
+        Rational& operator*=(const Rational& rhs) {
+            *this = *this * rhs;
+            return *this;
+        }
+
+        Rational operator/(const Rational& rhs) const {
+            return Rational(num * rhs.denom, denom * rhs.num);
+        }
+
+        Rational& operator/=(const Rational& rhs) {
+            *this = *this / rhs;
+            return *this;
+        }
+
+        Rational& operator=(const Rational& rhs) {
+            setnum(rhs.getnum());
+            setdenom(rhs.getdenom());
+            return *this;
         }
 
     private:
         //variables
         int32_t num;
-        int32_t denum;
+        int32_t denom;
         
         //methods
         void reduce() {
             int n = abs(num);
-            int d = abs(denum);
+            int d = abs(denom);
             int di = 1;
             if (n > d) {
                 std::swap(n, d);
@@ -119,35 +145,11 @@ class Rational {
                 }
             }
             num /= di;
-            denum /= di;
+            denom /= di;
         }
 };
 
 std::ostream& operator<<(std::ostream& ostrm, const Rational& r) {
-    return ostrm << '(' << r.getnum() << '/' << r.getdenum() << ')';
+    return ostrm << '(' << r.getnum() << '/' << r.getdenom() << ')';
 }
-
-int main() {
-    Rational n(1, 2);
-    Rational n1(2, 3);
-    Rational n2(1, 2);
-    Rational n3(2, 3);
-    Rational res = n + n1;
-    Rational res1 = n - n1;
-    bool res2 = n < n1;
-    bool res3 = n > n1;
-    Rational res4 = n2 += n3;
-    Rational res5 = n2 -= n3;
-    std::cout << res << std::endl;
-    std::cout << res1 << std::endl;
-    std::cout << res2 << std::endl;
-    std::cout << res3 << std::endl;
-    std::cout << res4 << std::endl;
-    std::cout << res5 << std::endl;
-    std::cout << ~n << std::endl;
-    std::cout << n * n1 << std::endl;
-    std::cout << n / n1 << std::endl;
-    return 0;
-}
-
 
