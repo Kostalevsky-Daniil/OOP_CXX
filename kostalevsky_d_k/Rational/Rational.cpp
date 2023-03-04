@@ -6,13 +6,18 @@ class Rational {
     public:
         //constructors and destructor
         Rational(int32_t num_, int32_t denom_) {
-            if ((num_ < 0) && (denom_ < 0)) {
-                num_ = abs(num_);
-                denom_ = abs(denom_);
+            if (denom_ != 0) {
+                if ((num_ < 0) && (denom_ < 0)) {
+                    num_ = abs(num_);
+                    denom_ = abs(denom_);
+                }
+                num = num_;
+                denom = denom_;
+                reduce();
             }
-            num = num_;
-            denom = denom_;
-            reduce();
+            else {
+                throw std::invalid_argument("Division by zero");
+            }
         }
 
         Rational() {
@@ -151,5 +156,13 @@ class Rational {
 
 std::ostream& operator<<(std::ostream& ostrm, const Rational& r) {
     return ostrm << '(' << r.getnum() << '/' << r.getdenom() << ')';
+}
+
+std::istream& operator>>(std::istream& is, Rational& rhs) {
+    int numerator, denominator;
+    char c;
+    is >> numerator >> c >> denominator;
+    rhs = Rational(numerator, denominator);
+    return is;
 }
 
