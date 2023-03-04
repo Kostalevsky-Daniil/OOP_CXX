@@ -39,3 +39,4 @@ class Rational {
 };
 
 std::ostream& operator<<(std::ostream& ostrm, const Rational& r);
+std::istream& operator>>(std::istream& is, Rational& rhs);
