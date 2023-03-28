@@ -2,11 +2,10 @@
 
 class Rational {
     public:
-        Rational() = default;
-        Rational(int32_t num_, int32_t denum_);
-        Rational(int32_t num);
+        Rational::Rational(int32_t num_, int32_t denum_);
+        explicit Rational::Rational(const int32_t num) noexcept;
+        Rational::Rational(const Rational&) = default;
         ~Rational() = default;
-
         void setnum();
         void setdenom();
         int32_t getnum();
