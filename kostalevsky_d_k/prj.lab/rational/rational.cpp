@@ -1,11 +1,11 @@
 #include <iostream>
 #include <sstream>
-#include "Rational.h"
+#include "Rational.hpp"
 
 class Rational {
     public:
         //constructors and destructor
-        Rational(int32_t num_, int32_t denom_) {
+        Rational::Rational(int32_t num_, int32_t denom_) {
             if (denom_ != 0) {
                 if ((num_ < 0) && (denom_ < 0)) {
                     num_ = abs(num_);
@@ -20,16 +20,17 @@ class Rational {
             }
         }
 
-        Rational() {
+        Rational::Rational() {
             setnum(0);
             setdenom(1);
         }
 
-        Rational(int32_t num) {
+        explicit Rational::Rational(const int32_t num) noexcept{
             setnum(num);
             setdenom(1);
         }
 
+        Rational::Rational(const Rational&) = default;
 
         ~Rational() = default;
 
@@ -55,6 +56,10 @@ class Rational {
             int prod = denom * rhs.denom;
             Rational sum(n1 + n2, prod);
             return sum;
+        }
+
+        Rational operator+(const int32_t) const {
+            
         }
 
         Rational& operator+=(const Rational &rhs) {
@@ -165,4 +170,3 @@ std::istream& operator>>(std::istream& is, Rational& rhs) {
     rhs = Rational(numerator, denominator);
     return is;
 }
-
