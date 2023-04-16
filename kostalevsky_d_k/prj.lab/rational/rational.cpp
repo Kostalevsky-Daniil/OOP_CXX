@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include "Rational.hpp"
+#include "include/rational/rational.hpp"
 
 class Rational {
     public:
@@ -50,36 +50,31 @@ class Rational {
         } 
 
         //operators overload
-        Rational operator+(const Rational& rhs) const {
-            int n1 = num * rhs.denom;
-            int n2 = rhs.num * denom;
-            int prod = denom * rhs.denom;
-            Rational sum(n1 + n2, prod);
-            return sum;
-        }
-
-        Rational operator+(const int32_t) const {
-            
-        }
+        // Rational operator+(const Rational& rhs) const {
+        //     int n1 = num * rhs.denom;
+        //     int n2 = rhs.num * denom;
+        //     int prod = denom * rhs.denom;
+        //     Rational sum(n1 + n2, prod);
+        //     return sum;
+        // }
 
         Rational& operator+=(const Rational &rhs) {
             int n = num * rhs.denom;
             int n1 = rhs.num * denom;
             int prod = denom * rhs.denom;
-
             num = n + n1;
             denom = prod;
             reduce();
             return *this;
         }
 
-        Rational operator-(const Rational& rhs) const {
-            int n1 = num * rhs.denom;
-            int n2 = rhs.num * denom;
-            int prod = denom * rhs.denom;
-            Rational sub(n1 - n2, prod);
-            return sub;
-        }
+        // Rational operator-(const Rational& rhs) const {
+        //     int n1 = num * rhs.denom;
+        //     int n2 = rhs.num * denom;
+        //     int prod = denom * rhs.denom;
+        //     Rational sub(n1 - n2, prod);
+        //     return sub;
+        // }
 
         Rational& operator-=(const Rational &rhs) {
             int n = num * rhs.denom;
@@ -96,8 +91,16 @@ class Rational {
             return ((num * rhs.denom) < (rhs.num * denom));
         }
 
+        bool operator<=(const Rational& rhs) const {
+            return (operator==(rhs) || !operator>(rhs));
+        }
+
         bool operator>(const Rational &rhs) const {
             return ((num * rhs.denom) > (rhs.num * denom));
+        }
+
+        bool operator>=(const Rational& rhs) const {
+            return (operator==(rhs) || operator>(rhs));
         }
 
         bool operator==(const Rational &rhs) const {
@@ -112,18 +115,18 @@ class Rational {
             return Rational(-num, denom);
         }
 
-        Rational operator*(const Rational& rhs) const {
-            return Rational(num * rhs.num, denom * rhs.denom);
-        }
+        // Rational operator*(const Rational& rhs) const {
+        //     return Rational(num * rhs.num, denom * rhs.denom);
+        // }
 
         Rational& operator*=(const Rational& rhs) {
             *this = *this * rhs;
             return *this;
         }
 
-        Rational operator/(const Rational& rhs) const {
-            return Rational(num * rhs.denom, denom * rhs.num);
-        }
+        // Rational operator/(const Rational& rhs) const {
+        //     return Rational(num * rhs.denom, denom * rhs.num);
+        // }
 
         Rational& operator/=(const Rational& rhs) {
             *this = *this / rhs;
@@ -136,10 +139,34 @@ class Rational {
             return *this;
         }
 
+        std::ostream& Rational::writeTo(std::ostream& ostrm) const {
+            ostrm << num << sep << denom;
+            return ostrm;
+        }
+
+        std::istream& Rational::readFrom(std::istream& istrm) {
+            int32_t p(0);
+            int32_t q(1);
+            char divide(0);
+            istrm >> p;
+            istrm >> divide;
+            istrm >> q;
+            if (istrm.good() || !istrm.fail() && istrm.eof()) {
+                if (Rational::sep == divide) {
+                    istrm.clear();
+                    *this = Rational(p, q);
+                } else {
+                    istrm.setstate(std::ios_base::failbit);
+                }
+            }
+            return istrm;
+        }
+
     private:
         //variables
-        int32_t num;
-        int32_t denom;
+        int32_t num{0};
+        int32_t denom{1};
+        static const char sep{'/'};
         
         //methods
         void reduce() {
@@ -159,14 +186,46 @@ class Rational {
         }
 };
 
-std::ostream& operator<<(std::ostream& ostrm, const Rational &r) {
-    return ostrm << '(' << r.getnum() << '/' << r.getdenom() << ')';
+// std::ostream& operator<<(std::ostream& ostrm, const Rational &r) {
+//     return ostrm << '(' << r.getnum() << '/' << r.getdenom() << ')';
+// }
+
+// std::istream& operator>>(std::istream& is, Rational& rhs) {
+//     int numerator, denominator;
+//     char c;
+//     is >> numerator >> c >> denominator;
+//     rhs = Rational(numerator, denominator);
+//     return is;
+// }
+
+Rational& operator+(const Rational& rhs, const Rational& lhs) {
+    int n1 = lhs.getnum() * rhs.getdenom();
+    int n2 = rhs.getnum() * lhs.getdenom();
+    int prod = lhs.getdenom() * rhs.getdenom();
+    Rational sum(n1 + n2, prod);
+    return sum;
 }
 
-std::istream& operator>>(std::istream& is, Rational& rhs) {
-    int numerator, denominator;
-    char c;
-    is >> numerator >> c >> denominator;
-    rhs = Rational(numerator, denominator);
-    return is;
+Rational& operator-(const Rational& rhs, const Rational& lhs) {
+    int n1 = lhs.getnum() * rhs.getdenom();
+    int n2 = rhs.getnum() * lhs.getdenom();
+    int prod = lhs.getdenom() * rhs.getdenom();
+    Rational sub(n1 - n2, prod);
+    return sub;
+}
+
+Rational operator*(const Rational& rhs, const Rational& lhs) {
+    return Rational(lhs.getnum() * rhs.getnum(), lhs.getdenom() * rhs.getdenom());
+}
+
+Rational operator/(const Rational& rhs, const Rational& lhs) {
+    return Rational(lhs.getnum() * rhs.getdenom(), lhs.getdenom() * rhs.getnum());
+}
+
+std::ostream& operator<<(std::ostream& ostrm, const Rational& rhs){
+    return rhs.writeTo(ostrm);
+}
+
+std::istream& operator>>(std::istream& istrm, Rational& rhs){
+    return rhs.readFrom(istrm);
 }
