@@ -1,53 +1,98 @@
+#include <sstream>
+
 #pragma once
-#ifndef RATIONAL_HPP_
-#define RATIONAL_HPP_
-#include <iosfwd>
+#ifndef RATIONAL_RATIONAL_HPP
+#define RATIONAL_RATIONAL_HPP
+
+const std::exception division_by_zero("Error: Division by zero");
 
 class Rational {
-    public:
-        Rational(int32_t num_, int32_t denum_);
-        explicit Rational(const int32_t num) noexcept;
-        Rational(const Rational&) = default;
-        ~Rational() = default;
-        void setnum(int32_t);
-        void setdenom(int32_t);
-        int32_t getnum() const;
-        int32_t getdenom() const;
-        Rational();
+public:
+    Rational() = default;
+    Rational(const Rational&) = default;
+    Rational(int32_t num, int32_t denum);
+    explicit Rational(int32_t num) { num_ = num; denum_ = 1; };
+    ~Rational() = default;
 
-        Rational& operator=(const Rational& rhs);
+    Rational& operator=(const Rational& rhs);
+    Rational& operator=(const int32_t& rhs);
+    Rational& operator+=(const Rational& rhs);
+    Rational& operator+=(const int32_t& rhs) { return operator+=(Rational(rhs, 1)); }
+    Rational& operator-=(const Rational& rhs);
+    Rational& operator-=(const int32_t& rhs) { return operator-=(Rational(rhs, 1)); }
+    Rational& operator*=(const Rational& rhs);
+    Rational& operator*=(const int32_t& rhs) { return operator*=(Rational(rhs, 1)); }
+    Rational& operator/=(const Rational& rhs);
+    Rational& operator/=(const int32_t& rhs) { return operator/=(Rational(rhs, 1)); }
+    Rational& operator++(int);
+    Rational& operator--(int);
+    Rational& operator++();
+    Rational& operator--();
 
-        Rational& operator+=(const Rational& rhs);
-        Rational& operator-=(const Rational& rhs);
-        Rational& operator*=(const Rational& rhs);
-        Rational& operator/=(const Rational& rhs);
+    bool operator==(const Rational& rhs) const {
+        return (num_ == rhs.num_)
+            && (denum_ == rhs.denum_);
+    }
+    bool operator==(const int32_t& rhs) const {
+        return (num_ == rhs)
+            && (denum_ == 1);
+    }
+    bool operator!=(const Rational& rhs) const { return !operator==(rhs); }
+    bool operator!=(const int32_t& rhs) const { return !operator==(rhs); }
+    bool operator>(const Rational& rhs) const {
+        return
+            num_ * rhs.denum_ - rhs.num_ * denum_ > 0;
+    };
+    bool operator>(const int32_t& rhs) const {
+        return
+            num_ - rhs * denum_ > 0;
+    };
+    bool operator<(const Rational& rhs) const {
+        return
+            num_ * rhs.denum_ - rhs.num_ * denum_ < 0;
+    };
+    bool operator<(const int32_t& rhs) const {
+        return
+            num_ - rhs * denum_ < 0;
+    };
+    bool operator<=(const Rational& rhs) const { return !operator>(rhs); }
+    bool operator<=(const int32_t& rhs) const { return !operator>(rhs); }
+    bool operator>=(const Rational& rhs) const { return !operator<(rhs); }
+    bool operator>=(const int32_t& rhs) const { return !operator<(rhs); }
 
-        Rational operator~()const;
+    int Nod();
+    Rational& ReduceRational();
 
-        bool operator<(const Rational &rhs) const;
-        bool operator<=(const Rational& rhs) const;
-        bool operator>(const Rational &rhs) const;
-        bool operator>=(const Rational& rhs) const;
-        bool operator==(const Rational &rhs) const;
-        bool operator!=(const Rational &rhs) const;
-
-        std::ostream& writeTo(std::ostream& ostrm);
-        std::istream& readFrom(std::istream& istrm);
-
-    private:
-        int32_t num{0};
-        int32_t denom{1};
-        static const char sep{'/'};
-    private:
-        void reduce();
+    std::ostream& WriteTo(std::ostream& ostrm) const;
+    std::istream& ReadFrom(std::istream& istrm);
+private:
+    int32_t num_{ 0 };
+    int32_t denum_{ 1 };
+    static const char separator{ '/' };
 };
 
-std::ostream& operator<<(std::ostream& ostrm, const Rational& r);
-std::istream& operator>>(std::istream& is, Rational& rhs);
+Rational operator+(const Rational& lhs, const Rational& rhs);
+Rational operator+(const Rational& lhs, const int32_t& rhs);
+Rational operator+(const int32_t& lhs, const Rational& rhs);
+Rational operator-(const Rational& lhs, const Rational& rhs);
+Rational operator-(const Rational& lhs, const int32_t& rhs);
+Rational operator-(const int32_t& lhs, const Rational& rhs);
+Rational operator*(const Rational& lhs, const int32_t& rhs);
+Rational operator*(const Rational& lhs, const Rational& rhs);
+Rational operator*(const int32_t& lhs, const Rational& rhs);
+Rational operator/(const Rational& lhs, const int32_t& rhs);
+Rational operator/(const Rational& lhs, const Rational& rhs);
+Rational operator/(const int32_t& lhs, const Rational& rhs);
+Rational operator-(const Rational& lhs);
 
-Rational& operator+(const Rational& rhs, const Rational& lhs);
-Rational& operator-(const Rational& rhs, const Rational& lhs);
-Rational operator*(const Rational& rhs, const Rational& lhs);
-Rational operator/(const Rational& rhs, const Rational& lhs);
+inline std::ostream& operator<<(std::ostream& ostrm, const Rational& rhs)
+{
+    return rhs.WriteTo(ostrm);
+}
 
-#endif  // RATIONAL_HPP_
+inline std::istream& operator>>(std::istream& istrm, Rational& rhs)
+{
+    return rhs.ReadFrom(istrm);
+}
+
+#endif //RATIONAL.HPP
