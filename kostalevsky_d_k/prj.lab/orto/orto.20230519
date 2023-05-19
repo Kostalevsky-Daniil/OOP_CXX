@@ -1,0 +1,67 @@
+#include<iostream>
+
+class Quad {
+    public:
+        //constructors and destructor
+        Quad() = default;
+        ~Quad() = default;
+        Quad(int w_, int h_) { //using height and width
+            w = w_;
+            h = h_;
+        }
+        Quad(int x1_, int x2_, int y1_, int y2_) { //using coordinates
+            w = Quad::vectx(x1_, x2_);
+            h = Quad::vecty(y1_, y2_);
+        }
+
+        //getters and setters
+        void set_h(int h_) {
+            h = h_;
+        }
+        void set_w(int w_) {
+            w = w_;
+        }
+        void set_coord(int x1_, int x2_, int y1_, int y2_) {
+            x1 = x1_;
+            x2 = x2_;
+            y1 = y1_;
+            y2 = y2_;
+        }
+        void set_x1(int x1_) {
+            x1 = x1_;
+        }
+        void set_x2(int x2_) {
+            x2 = x2_;
+        }
+        void set_y1(int y1_) {
+            y1 = y1_;
+        }
+        void set_y2(int y2_) {
+            y2 = y2_;
+        }
+        int get_h() {
+            return h;
+        }
+        int get_w() {
+            return w;
+        }
+    private:
+        int w = 0;
+        int h = 0;
+        int x1 = 0;
+        int x2 = 0;
+        int y1 = 0;
+        int y2 = 0;
+        int vectx(int x1, int x2) {
+            w = abs(x2 - x1);
+            return w;
+        }
+        int vecty(int y1, int y2) {
+            h = abs(y2 - y1);
+            return h;
+        }
+};
+
+int main() {
+    return 0;
+}
